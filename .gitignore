@@ -1,0 +1,35 @@
+### Credenciais ###
+.env
+
+### NGINX ###
+
+# O arquivo de configuração do NGINX é gerado dinamicamente,
+# baseando-se no nginx.conf.example
+nginx/nginx.conf
+
+### WordPress ###
+
+# Ignora tudo no root exceto o diretório "wp-content"
+wordpress/*
+!wordpress/wp-content/
+
+# Ignora tudo no "wp-content", exceto:
+# "mu-plugins", "plugins", "themes"
+wordpress/wp-content/*
+!wordpress/wp-content/mu-plugins/
+!wordpress/wp-content/plugins/
+!wordpress/wp-content/themes/
+
+# Ignora plugins específicos
+#wp-content/plugins/hello.php
+
+# Ignora temas específicos
+#wp-content/themes/twenty*/
+
+# Ignora os node_modules
+node_modules/
+
+# Ignora arquivos de log e banco
+*.log
+*.sql
+*.sqlite

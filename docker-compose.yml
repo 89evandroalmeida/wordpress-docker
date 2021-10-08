@@ -1,0 +1,53 @@
+version: '3.9'
+
+volumes:
+  db_data:
+
+networks:
+  wpdocknet:
+
+services:
+  db:    
+    image: mysql:latest
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - '3306:3306'  
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_DB_ROOT}"
+      MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_USER: "${DB_USER}"
+      MYSQL_PASSWORD: "${DB_PWD}"
+    networks:
+      - wpdocknet
+
+  wordpress:
+    image: wordpress:php8.0-fpm
+    depends_on:
+      - db
+    volumes:
+      - ./wordpress:/var/www/html
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: "${DB_NAME}"
+      WORDPRESS_DB_USER: "${DB_USER}"
+      WORDPRESS_DB_PASSWORD: "${DB_PWD}"
+      WP_DEBUG: "true"
+    networks:
+      - wpdocknet
+
+  nginx:
+    image: nginx:latest
+    links:
+      - wordpress
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./wordpress:/var/www/html
+    restart: always
+    networks:
+      - wpdocknet
